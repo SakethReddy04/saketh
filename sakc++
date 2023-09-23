@@ -1,0 +1,92 @@
+#include <iostream>
+#include <fstream>
+#include <cstring>
+
+using namespace std;
+
+// Define the structure for student records
+struct Student {
+    char name[50];
+    int rollNumber;
+    float marks;
+};
+
+// Function to add a new student record
+void addStudent() {
+    ofstream outFile("student_records.txt", ios::app);
+    
+    if (!outFile) {
+        cout << "Error: Unable to open the file!" << endl;
+        return;
+    }
+    
+    Student student;
+    
+    cout << "Enter Student Name: ";
+    cin.ignore();
+    cin.getline(student.name, 50);
+    
+    cout << "Enter Roll Number: ";
+    cin >> student.rollNumber;
+    
+    cout << "Enter Marks: ";
+    cin >> student.marks;
+    
+    outFile.write(reinterpret_cast<char*>(&student), sizeof(Student));
+    
+    outFile.close();
+    
+    cout << "Student record added successfully!" << endl;
+}
+
+// Function to display all student records
+void displayRecords() {
+    ifstream inFile("student_records.txt", ios::binary);
+    
+    if (!inFile) {
+        cout << "No records found!" << endl;
+        return;
+    }
+    
+    Student student;
+    
+    cout << "Student Records:" << endl;
+    
+    while (inFile.read(reinterpret_cast<char*>(&student), sizeof(Student))) {
+        cout << "Name: " << student.name << endl;
+        cout << "Roll Number: " << student.rollNumber << endl;
+        cout << "Marks: " << student.marks << endl;
+        cout << "-----------------------------" << endl;
+    }
+    
+    inFile.close();
+}
+
+int main() {
+    int choice;
+    
+    while (true) {
+        cout << "Student Record System" << endl;
+        cout << "1. Add Student Record" << endl;
+        cout << "2. Display Student Records" << endl;
+        cout << "3. Quit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        
+        switch (choice) {
+            case 1:
+                addStudent();
+                break;
+            case 2:
+                displayRecords();
+                break;
+            case 3:
+                cout << "Exiting the program." << endl;
+                return 0;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+    }
+    
+    return 0;
+}
